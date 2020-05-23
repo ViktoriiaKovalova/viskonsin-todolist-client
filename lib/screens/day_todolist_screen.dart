@@ -26,6 +26,21 @@ class _DayTodolistScreenState extends State<DayTodolistScreen> {
     });
   }
 
+  void _presentDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2019),
+      lastDate: DateTime.now(),
+    ).then((pickedData) {
+      if (pickedData == null) {
+        return;
+      }
+      Provider.of<TodoProvider>(context).currentDay = pickedData;
+      _fetchData();
+    });
+  }
+
   @override
   void didChangeDependencies() {
     if (_isInit) {
@@ -55,7 +70,7 @@ class _DayTodolistScreenState extends State<DayTodolistScreen> {
       title: _buildCurrentDayRow(),
       actions: <Widget>[
         IconButton(
-          onPressed: () {},
+          onPressed: _presentDatePicker,
           icon: Icon(Icons.calendar_today),
         ),
         IconButton(
@@ -86,7 +101,7 @@ class _DayTodolistScreenState extends State<DayTodolistScreen> {
         return ListTile(
           leading: Icon(Icons.event_available),
           title: Text(currTask.description),
-          subtitle: Text("Time: $taskTime Tag: ${currTask.label}"),
+          subtitle: Text("Time: $taskTime | Tag: ${currTask.label}"),
         );
       },
     );

@@ -33,6 +33,9 @@ class TodoProvider with ChangeNotifier {
 
   DateTime get currentDay => _currentDay;
 
+  set currentDay(DateTime newCurrentDay) =>
+      _currentDay = newCurrentDay == null ? DateTime.now() : newCurrentDay;
+
   List<Todo> get currentDayTodolist => [..._todoList];
 
   void next() {
