@@ -59,6 +59,15 @@ class TodoProvider with ChangeNotifier {
     //TODO: api call and error handling
   }
 
+  Todo getTodoById(int id) =>
+      _todoList.firstWhere((element) => element.id == id);
+
+  void deleteTodo(int todoId) {
+    //todo: api-delete
+    _todoList.removeWhere((element) => element.id == todoId);
+    notifyListeners();
+  }
+
   void clear() {
     // TODO: api call and error handling
     _todoList.clear();

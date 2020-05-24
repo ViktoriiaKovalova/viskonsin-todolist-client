@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/todo_provider.dart';
 import '../components/app_drawer.dart';
+import '../components/todo_form.dart';
 
 class DayTodolistScreen extends StatefulWidget {
   static const String routeName = '/list';
@@ -74,7 +75,7 @@ class _DayTodolistScreenState extends State<DayTodolistScreen> {
           icon: Icon(Icons.calendar_today),
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () => Navigator.pushNamed(context, '/create'),
           icon: Icon(Icons.add),
         ),
       ],
@@ -102,6 +103,16 @@ class _DayTodolistScreenState extends State<DayTodolistScreen> {
           leading: Icon(Icons.event_available),
           title: Text(currTask.description),
           subtitle: Text("Time: $taskTime | Tag: ${currTask.label}"),
+          trailing: IconButton(
+            icon: Icon(
+              Icons.arrow_forward_ios,
+            ),
+            onPressed: () => Navigator.pushNamed(
+              context,
+              '/edit',
+              arguments: currTask.id,
+            ),
+          ),
         );
       },
     );
