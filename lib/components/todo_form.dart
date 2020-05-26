@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import '../providers/todo_provider.dart';
 import '../models/todo.dart';
 
 class TodoForm extends StatefulWidget {
@@ -13,13 +15,46 @@ class TodoForm extends StatefulWidget {
 
 class _TodoFormState extends State<TodoForm> {
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   /* form data */
   String _label;
   String _note;
-  int _projectId = -1;
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
+
+  Future<void> _sendData() async {
+    _formKey.currentState.save();
+    
+    DateTime timestamp = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      _selectedTime.hour,
+      _selectedTime.minute,
+    );
+
+    final provider = Provider.of<TodoProvider>(
+      context,
+      listen: false,
+    );
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    if (widget.todo == null) {
+      await provider.create(_label, timestamp, _note);
+    } else {
+      await provider.edit(widget.todo.id, _label, timestamp, _note);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    Navigator.of(context).pop();
+  }
 
   @override
   void initState() {
@@ -84,25 +119,29 @@ class _TodoFormState extends State<TodoForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12.0,
-          vertical: 50.0,
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _buildButtonAndTimeRow(),
-              _buildButtonAndInputTextRow(),
-            ],
-          ),
-        ),
-      ),
-    );
+    return _isLoading
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 50.0,
+              ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _buildButtonAndTimeRow(),
+                    _buildButtonAndInputTextRow(),
+                  ],
+                ),
+              ),
+            ),
+          );
   }
 
   Widget _buildButtonAndTimeRow() {
@@ -158,7 +197,9 @@ class _TodoFormState extends State<TodoForm> {
 
   Widget _buildButtonAndInputTextRow() {
     final submitButton = RaisedButton(
-      onPressed: () {},
+      onPressed: () async {
+        await _sendData();
+      },
       child: Text(
         widget.todo == null ? "Create" : "Edit",
         style: TextStyle(

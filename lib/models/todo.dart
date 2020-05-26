@@ -10,4 +10,19 @@ class Todo {
     this.label,
     this.description,
   });
+
+  Todo.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        timestamp = json['timestamp'],
+        label = json['label'],
+        description = json['description'];
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      "id": id,
+      "timestamp": timestamp,
+      "label": label,
+      "description": description,
+    };
+  }
 }

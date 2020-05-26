@@ -25,7 +25,7 @@ class TodoDetailScreen extends StatelessWidget {
       title: Text("Edit todo"),
       actions: <Widget>[
         IconButton(
-          onPressed: handler,
+          onPressed: () async => await handler(),
           icon: Icon(Icons.delete),
         ),
       ],

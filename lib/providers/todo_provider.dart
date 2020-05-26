@@ -1,33 +1,11 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 import '../models/todo.dart';
 
 class TodoProvider with ChangeNotifier {
-  List<Todo> _todoList = [
-    Todo(
-      id: 1,
-      timestamp: DateTime.now().millisecondsSinceEpoch,
-      label: "Work",
-      description: "Test",
-    ),
-    Todo(
-      id: 2,
-      timestamp: DateTime.now().millisecondsSinceEpoch,
-      label: "Work",
-      description: "Test 1",
-    ),
-    Todo(
-      id: 3,
-      timestamp: DateTime.now().millisecondsSinceEpoch,
-      label: "Work",
-      description: "Test 3",
-    ),
-    Todo(
-      id: 4,
-      timestamp: DateTime.now().millisecondsSinceEpoch,
-      label: "Work",
-      description: "Test 4",
-    ),
-  ];
+  ApiService _api = ApiService();
+
+  List<Todo> _todoList = [];
 
   DateTime _currentDay = DateTime.now();
 
@@ -55,21 +33,51 @@ class TodoProvider with ChangeNotifier {
   }
 
   Future<void> fetchTodolist() async {
-    return Future.delayed(const Duration(seconds: 1));
-    //TODO: api call and error handling
+    _todoList = await _api.fetchTodos(_currentDay);
   }
 
-  Todo getTodoById(int id) =>
-      _todoList.firstWhere((element) => element.id == id);
+  Future<void> create(
+    String label,
+    DateTime timestamp,
+    String note,
+  ) async {
+    Todo todo = Todo(
+      id: 1,
+      label: label,
+      description: note,
+      timestamp: timestamp.millisecondsSinceEpoch,
+    );
 
-  void deleteTodo(int todoId) {
-    //todo: api-delete
-    _todoList.removeWhere((element) => element.id == todoId);
+    await _api.createTodo(todo);
     notifyListeners();
   }
 
+  Future<void> edit(
+    int id,
+    String label,
+    DateTime timestamp,
+    String note,
+  ) async {
+    Todo todo = Todo(
+      id: id,
+      label: label,
+      description: note,
+      timestamp: timestamp.millisecondsSinceEpoch,
+    );
+
+    await _api.editTodo(todo);
+    notifyListeners();
+  }
+
+  Todo getTodoById(int id) =>
+      _todoList.firstWhere((element) => element.id == id, orElse: () => null);
+
+  Future<void> deleteTodo(int todoId) async {
+    await _api.delete(todoId);
+  }
+
   void clear() {
-    // TODO: api call and error handling
+    _api.clear();
     _todoList.clear();
     notifyListeners();
   }

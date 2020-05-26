@@ -20,7 +20,9 @@ class _DayTodolistScreenState extends State<DayTodolistScreen> {
     setState(() {
       _isLoading = true;
     });
-    Provider.of<TodoProvider>(context).fetchTodolist().then((_) {
+    Provider.of<TodoProvider>(
+      context,
+    ).fetchTodolist().then((_) {
       setState(() {
         _isLoading = false;
       });
@@ -75,7 +77,8 @@ class _DayTodolistScreenState extends State<DayTodolistScreen> {
           icon: Icon(Icons.calendar_today),
         ),
         IconButton(
-          onPressed: () => Navigator.pushNamed(context, '/create'),
+          onPressed: () => Navigator.pushNamed(context, '/create')
+              .whenComplete(() => _fetchData()),
           icon: Icon(Icons.add),
         ),
       ],
@@ -111,7 +114,7 @@ class _DayTodolistScreenState extends State<DayTodolistScreen> {
               context,
               '/edit',
               arguments: currTask.id,
-            ),
+            ).whenComplete(() => _fetchData()),
           ),
         );
       },
