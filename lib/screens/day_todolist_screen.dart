@@ -34,7 +34,7 @@ class _DayTodolistScreenState extends State<DayTodolistScreen> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2019),
-      lastDate: DateTime.now(),
+      lastDate: DateTime(2100),
     ).then((pickedData) {
       if (pickedData == null) {
         return;

@@ -81,8 +81,8 @@ class _TodoFormState extends State<TodoForm> {
           : DateTime.fromMillisecondsSinceEpoch(
               widget.todo.timestamp,
             ),
-      firstDate: DateTime(1970),
-      lastDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
     ).then((pickedData) {
       if (pickedData == null) {
         return;
